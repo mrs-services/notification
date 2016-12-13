@@ -1,0 +1,74 @@
+
+---
+resources:
+- name: notification-app
+  type: git
+  source:
+    uri: https://github.com/mrs-services/notification.git
+- name: utils
+  type: git
+  source:
+    uri: https://github.com/maki-home/concourse-utils.git
+jobs:
+- name: unit-test
+  plan:
+  - aggregate:
+    - get: notification-app
+      trigger: true
+    - get: utils
+  - task: mvn-test
+    config:
+      platform: linux
+      inputs:
+      - name: notification-app
+      - name: utils
+      image_resource:
+        type: docker-image
+        source:
+          repository: nexus.ik.am:18443/maven
+          insecure_registries:
+          - nexus.ik.am:18443
+          username: {{nexus-username}}
+          password: {{nexus-password}}
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          cd notification-app
+          ../utils/scripts/add-repos-in-pom-xml.sh
+          mvn test
+- name: deploy-to-nexus
+  plan:
+  - aggregate:
+    - get: notification-app
+      trigger: true
+      passed:
+      - unit-test
+    - get: utils
+  - task: mvn-deploy
+    config:
+      platform: linux
+      inputs:
+      - name: notification-app
+      - name: utils
+      outputs:
+      - name: output
+      image_resource:
+        type: docker-image
+        source:
+          repository: nexus.ik.am:18443/maven
+          insecure_registries:
+          - nexus.ik.am:18443
+          username: {{nexus-username}}
+          password: {{nexus-password}}
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          cd notification-app
+          ../utils/scripts/add-repos-in-pom-xml.sh
+          ../utils/scripts/add-distribution-management-in-pom-xml.sh
+          ../utils/scripts/generate-settings-xml.sh {{nexus-username}} {{nexus-password}}
+          mvn deploy -s settings.xml -Dmaven.test.skip=true
