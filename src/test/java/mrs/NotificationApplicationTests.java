@@ -15,9 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-		"spring.datasource.url=jdbc:h2:mem:test;MODE=MySQL", "spring.jpa.database=H2",
-		"spring.datasource.driver-class-name=org.h2.Driver" })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class NotificationApplicationTests {
 	@Autowired
 	TestRestTemplate restTemplate;
