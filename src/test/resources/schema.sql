@@ -1,0 +1,1 @@
+CREATE SCHEMA IF NOT EXISTS "public"; -- Hack for H2 Compatibility
