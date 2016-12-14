@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = NotificationApplication.class)
+@SpringBootTest(classes = NotificationApplication.class, properties = {"spring.cloud.config.enabled=false"})
 public abstract class RestBase {
 	protected MockMvc mockMvc;
 	@Autowired

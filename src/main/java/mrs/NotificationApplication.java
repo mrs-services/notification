@@ -1,7 +1,9 @@
 package mrs;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
@@ -9,6 +11,7 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapt
 import org.springframework.validation.Validator;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class NotificationApplication {
 
 	public static void main(String[] args) {
@@ -19,7 +22,7 @@ public class NotificationApplication {
 	public static class RestConfig extends RepositoryRestConfigurerAdapter {
 		private final Validator validator;
 
-		public RestConfig(@Lazy Validator validator) {
+		public RestConfig(@Lazy @Qualifier("mvcValidator") Validator validator) {
 			this.validator = validator;
 		}
 
